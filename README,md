@@ -1,0 +1,77 @@
+# AI Module - Text Analysis
+
+This module provides a unified text analysis interface using multiple AI providers (currently supports **Azure Content Safety**).
+
+## **1. Setup**
+
+### **1.1 Create a virtual environment (recommended)**
+
+```bash
+python -m venv venv
+# Activate it:
+# Windows (PowerShell)
+venv\Scripts\Activate
+```
+
+### **1.2 Install dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## **2. Configure Environment Variables**
+
+Have a `.env` file in the project root:
+
+```ini
+AZURE_CONTENT_SAFETY_KEY=azure_api_key
+AZURE_CONTENT_SAFETY_ENDPOINT=azure_endpoint_url
+```
+
+Ensure `.env` is listed in `.gitignore` to keep secrets out of version control.
+
+---
+
+---
+
+## **3. Usage**
+
+### **3.1 Directly using the convenience function**
+
+```python
+from ai_module import analyze_text
+
+result = analyze_text("This is a test message.")
+print(result)
+```
+
+### **3.2 Using the `TextAnalyzer` class**
+
+```python
+from ai_module import TextAnalyzer
+
+analyzer = TextAnalyzer(provider='azure')
+result = analyzer.analyze("This is a harmful message with hate speech.")
+print(result)
+```
+
+Example output:
+
+```json
+{
+  "is_harmful": true,
+  "risk_level": "High",
+  "categories": {
+    "Hate": "High"
+  },
+  "confidence_scores": {
+    "Hate": 0.85
+  },
+  "provider": "azure",
+  "error": None
+}
+```
+
+
