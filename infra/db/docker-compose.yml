@@ -1,19 +1,22 @@
 services:
-  pg:
+  db:
     image: pgvector/pgvector:pg16
     container_name: pg-cybersafe-dev
-    ports:
-      - "5432:5432"   # If 5432 is occupied, change it to “5433:5432”. 
     environment:
       POSTGRES_DB: cyber_safe
       POSTGRES_USER: cyberdev
       POSTGRES_PASSWORD: devpass
+    ports:
+      - "5433:5432"  
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U cyberdev -d cyber_safe"]
       interval: 5s
-      timeout: 3s
-      retries: 20
+      timeout: 5s
+      retries: 12
     restart: unless-stopped
+
+volumes:
+  pgdata:
