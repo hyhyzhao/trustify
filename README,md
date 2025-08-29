@@ -1,6 +1,27 @@
-# AI Module - Text Analysis
+# Screenshot OCR & Text Safety Analyzer
 
-This module provides a unified text analysis interface using multiple AI providers (currently supports **Azure Content Safety**).
+This project allows users to upload screenshots, extract text using **OCR**, and analyze the text for harmful content using **Azure Content Safety**.  
+The workflow is fully ephemeral: images are processed in memory and **not stored locally or in a database**.
+
+---
+
+## Project Structure
+/TRUSTIFY
+│ .env # Environment variables (keys)
+│ requirements.txt # Python dependencies
+│
+└───ai_module/
+│ init.py
+│ text_analyzer.py # Unified text analysis entry
+│
+├───providers/ # AI provider implementations
+│ │ init.py
+│ │ azure_client.py # Azure Content Safety implementation
+│ │ huggingface_client.py # (Future)
+│
+└───utils/
+│ init.py
+│ ocr_extractor.py # OCR utilities using EasyOCR
 
 ## **1. Setup**
 
@@ -18,7 +39,7 @@ venv\Scripts\Activate
 ```bash
 pip install -r requirements.txt
 ```
-
+The first time you run OCR, EasyOCR will download its language models (~60–200MB).
 ---
 
 ## **2. Configure Environment Variables**
@@ -55,6 +76,23 @@ from ai_module import TextAnalyzer
 analyzer = TextAnalyzer(provider='azure')
 result = analyzer.analyze("This is a harmful message with hate speech.")
 print(result)
+```
+
+### **3.3 Image-to-text + content safety**
+
+```python
+from ai_module.utils.ocr_extractor import OCRExtractor
+from ai_module.text_analyzer import TextAnalyzer
+
+ocr = OCRExtractor()
+analyzer = TextAnalyzer(provider='azure')
+
+# Process an uploaded screenshot (file path or file-like object)
+text = ocr.extract_text("test_image.png")  # or a BytesIO object
+result = analyzer.analyze(text)
+
+print("Extracted Text:", text)
+print("Analysis Result:", result)
 ```
 
 Example output:
